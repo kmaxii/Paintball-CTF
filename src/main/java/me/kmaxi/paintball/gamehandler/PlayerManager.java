@@ -1,5 +1,7 @@
 package me.kmaxi.paintball.gamehandler;
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
+
 import java.util.UUID;
 
 public class PlayerManager {
@@ -8,7 +10,9 @@ public class PlayerManager {
     private int deaths;
     private int flagCaptures;
     private int killstreak;
+    private Boolean isAlive;
     private Boolean isInGame;
+    private String team;
 
 
 
@@ -23,6 +27,8 @@ public class PlayerManager {
         this.flagCaptures = 0;
         this.killstreak = 0;
         this.setInGame(false);
+        this.team = " ";
+        this.isAlive = false;
     }
 
 
@@ -55,4 +61,21 @@ public class PlayerManager {
     public void flagCapture(){
         this.flagCaptures++;
     }
+
+    public void setTeam(String team){
+        this.team = team;
+    }
+
+    public String getTeam(){
+        return this.team;
+    }
+
+    public void setAlive(Boolean alive) {
+        isAlive = alive;
+    }
+
+    public Boolean isAlive(){
+        return isAlive;
+    }
 }
+

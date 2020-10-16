@@ -1,0 +1,6 @@
+  name: PaintballCTF
+  author: kmaxi
+  version: 1.0
+  main: me.kmaxi.paintball.PaintballMain
+  commands:
+    paintball:

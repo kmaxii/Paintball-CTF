@@ -24,9 +24,7 @@ public class GameFunctions {
 
     public void assignTeams(){
         ArrayList<UUID> allPlayers = new ArrayList<>();
-        plugin.gameManager.players.keySet().forEach(uuid -> {
-            allPlayers.add(uuid);
-        });
+        allPlayers.addAll(plugin.gameManager.players.keySet());
         Collections.shuffle(allPlayers);
         int i = 1;
         for (UUID uuid : allPlayers) {
@@ -37,30 +35,32 @@ public class GameFunctions {
             }
             i++;
             plugin.inventoryManagment.setArmor(uuid); //Sets the armor for the player
+            plugin.playerManagment.teleportToSpawnPoint(uuid);
         }
     }
     public void placeFlags(){
-        if (!plugin.gameManager.redFlagTaken){
-            Location redFlagLocation = plugin.gameManager.redFlagLocation;
+        if (!plugin.gameManager.flags.get("red").isTaken()){
+            Location redFlagLocation = plugin.gameManager.flags.get("red").getLocation();
             redFlagLocation.getWorld().getBlockAt(redFlagLocation).setType(Material.RED_BANNER);
         }
-        if (!plugin.gameManager.blueFlagTaken){
-            Location blueFlagLocation = plugin.gameManager.blueFlagLocation;
+        if (!plugin.gameManager.flags.get("blue").isTaken()){
+            Location blueFlagLocation = plugin.gameManager.flags.get("blue").getLocation();
             blueFlagLocation.getWorld().getBlockAt(blueFlagLocation).setType(Material.BLUE_BANNER);
         }
     }
 
     public void addSnowballs(Player player){
+        PlayerInventory inv = player.getInventory();
+        inv.remove(Material.SNOWBALL);
         new BukkitRunnable(){
             int time = 5;
             @Override
             public void run() {
                 if (time > 0){
-                    player.sendMessage(ChatColor.YELLOW + "" + time + " seconds remaining");
-                    player.playSound(player.getLocation(), Sound.BLOCK_SNOW_BREAK, 2, 2);
+                    player.sendMessage(ChatColor.WHITE + "" + time + " seconds remaining");
                     time--;
                 } else {
-                    PlayerInventory inv = player.getInventory();
+                    player.playSound(player.getLocation(), Sound.BLOCK_SNOW_PLACE, 2, 2);
                     inv.setItem(0, new ItemStack(Material.SNOWBALL, 64));
                     cancel();
                 }

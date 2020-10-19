@@ -2,5 +2,6 @@
   author: kmaxi
   version: 1.0
   main: me.kmaxi.paintball.PaintballMain
+  api-version: 1.16
   commands:
     paintball:

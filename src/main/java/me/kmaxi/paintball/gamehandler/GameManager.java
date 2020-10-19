@@ -2,11 +2,9 @@ package me.kmaxi.paintball.gamehandler;
 
 import me.kmaxi.paintball.PaintballMain;
 import me.kmaxi.paintball.utils.InventoryManagment;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
@@ -17,12 +15,9 @@ public class GameManager {
     private final PaintballMain plugin;
     private boolean isStarting;
     public boolean isInGame;
-    public boolean redFlagTaken;
-    public boolean blueFlagTaken;
+    public HashMap<String, Flag> flags;
     public HashMap<UUID, PlayerManager> players;
-    private Location jail;
-    public Location redFlagLocation;
-    public Location blueFlagLocation;
+    public Location jail;
     public ArrayList<Location> redSpawnPoints;
     public ArrayList<Location> blueSpawnPoints;
     public GameFunctions gameFunctions;
@@ -36,8 +31,7 @@ public class GameManager {
         this.redSpawnPoints = new ArrayList<>();
         this.blueSpawnPoints = new ArrayList<>();
         this.gameFunctions = new GameFunctions(plugin);
-        this.redFlagTaken = false;
-        this.blueFlagTaken = false;
+        this.flags = new HashMap<>();
     }
 
     public void startGame(){ //Starts the game
@@ -49,6 +43,7 @@ public class GameManager {
             Bukkit.broadcastMessage(ChatColor.RED + "Missing config file(s)");
             return;
         }
+        this.initializeLocations();
         this.isStarting = true;
         for (Player player : Bukkit.getOnlinePlayers()) { //Loop for every player that is online
             UUID playerUUID = player.getUniqueId();
@@ -56,7 +51,7 @@ public class GameManager {
                 players.get(playerUUID).reset();
                 continue;
             }
-            players.put(playerUUID, new PlayerManager(playerUUID));
+            players.put(playerUUID, new PlayerManager(player));
             InventoryManagment.clear(player);
         }
         new BukkitRunnable() { //Countdown for game start
@@ -81,6 +76,12 @@ public class GameManager {
     private void startGameStepTwo(){
         gameFunctions.assignTeams();
         gameFunctions.placeFlags();
+        players.keySet().forEach(uuid -> {
+            Player player = Bukkit.getPlayer(uuid);
+            player.getInventory().setItem(0, new ItemStack(Material.SNOWBALL, 64));
+        });
+        this.isStarting = false;
+        this.isInGame = true;
 
 
 
@@ -96,7 +97,6 @@ public class GameManager {
                 && plugin.getConfig().contains("paintball.jail")
                 && plugin.getConfig().contains("paintball.red.flagposition")
                 && plugin.getConfig().contains("paintball.blue.flagposition")){
-            this.initializeLocations();
             return false;
         }
         return true;
@@ -104,8 +104,8 @@ public class GameManager {
 
     private void initializeLocations(){ //Initializes all locations in this class to the ones that stand in the config
         this.jail = (Location) plugin.getConfig().get("paintball.jail");
-        this.redFlagLocation = (Location) plugin.getConfig().get("paintball.red.flagposition");
-        this.blueFlagLocation = (Location) plugin.getConfig().get("paintball.blue.flagposition");
+        this.flags.put("red", new Flag(plugin, (Location) plugin.getConfig().get("paintball.red.flagposition")));
+        this.flags.put("blue", new Flag(plugin, (Location) plugin.getConfig().get("paintball.blue.flagposition")));
         this.redSpawnPoints.clear();
         this.blueSpawnPoints.clear();
 
@@ -115,7 +115,7 @@ public class GameManager {
         }
         spawnPointAmount = (int) plugin.getConfig().get("paintball.blue.spawnPointAmount");
         for (int i = 1; i <= spawnPointAmount; i++){
-            redSpawnPoints.add((Location) plugin.getConfig().get("paintball.blue.spawnPoints." + i));
+            blueSpawnPoints.add((Location) plugin.getConfig().get("paintball.blue.spawnPoints." + i));
         }
     }
 

@@ -1,6 +1,7 @@
 package me.kmaxi.paintball.gamehandler;
 
 import com.sun.org.apache.xpath.internal.operations.Bool;
+import org.bukkit.entity.Player;
 
 import java.util.UUID;
 
@@ -13,11 +14,15 @@ public class PlayerManager {
     private Boolean isAlive;
     private Boolean isInGame;
     private String team;
+    private Boolean hasFlag;
+    private Player player;
+    private Boolean hasThrownSnowball;
 
 
 
-    public PlayerManager(UUID uuid) {
-        this.uuid = uuid;
+    public PlayerManager(Player player) {
+        this.player = player;
+        this.uuid = player.getUniqueId();
         this.reset();
     }
 
@@ -29,6 +34,8 @@ public class PlayerManager {
         this.setInGame(false);
         this.team = " ";
         this.isAlive = false;
+        this.setHasThrownSnowball(false);
+
     }
 
 
@@ -56,10 +63,13 @@ public class PlayerManager {
     public void die(){
         this.deaths++;
         this.killstreak = 0;
+        this.setAlive(false);
+        this.setHasFlag(false);
     }
 
     public void flagCapture(){
         this.flagCaptures++;
+        this.setHasFlag(false);
     }
 
     public void setTeam(String team){
@@ -76,6 +86,25 @@ public class PlayerManager {
 
     public Boolean isAlive(){
         return isAlive;
+    }
+
+    public void setHasFlag(Boolean hasFlag) {
+        this.hasFlag = hasFlag;
+    }
+    public Boolean getHasFlag() {
+        return hasFlag;
+    }
+
+    public Player getPlayer() {
+        return player;
+    }
+
+    public void setHasThrownSnowball(Boolean hasThrownSnowball) {
+        this.hasThrownSnowball = hasThrownSnowball;
+    }
+
+    public Boolean getHasThrownSnowball() {
+        return hasThrownSnowball;
     }
 }
 

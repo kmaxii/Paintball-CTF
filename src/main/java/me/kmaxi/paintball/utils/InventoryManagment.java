@@ -44,14 +44,10 @@ public class InventoryManagment {
 
 
 
-
-
-
-
     private void setArmor(PlayerInventory inv, Color color) {
         inv.setBoots(this.setArmor(new ItemStack(Material.LEATHER_BOOTS), color));
         inv.setLeggings(this.setArmor(new ItemStack(Material.LEATHER_LEGGINGS), color));
-        inv.setBoots(this.setArmor(new ItemStack(Material.LEATHER_CHESTPLATE), color));
+        inv.setChestplate(this.setArmor(new ItemStack(Material.LEATHER_CHESTPLATE), color));
     }
     private static ItemStack setArmor(ItemStack itemStack, Color color){
         LeatherArmorMeta meta = (LeatherArmorMeta) itemStack.getItemMeta();

@@ -1,17 +1,17 @@
 package me.kmaxi.paintball.listeners;
 
 import me.kmaxi.paintball.PaintballMain;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.scheduler.BukkitRunnable;
 
 public class ReloadSnowballs implements Listener {
     private final PaintballMain plugin;
@@ -31,11 +31,19 @@ public class ReloadSnowballs implements Listener {
         if (!plugin.gameManager.players.containsKey(player.getUniqueId())){
             return;
         }
-        PlayerInventory inv = player.getInventory();
-        if (inv.contains(new ItemStack(Material.SNOWBALL))){
-            return;
-        }
-        plugin.gameManager.gameFunctions.addSnowballs(player);
+        new BukkitRunnable(){
+
+            @Override
+            public void run() {
+                PlayerInventory inv = player.getInventory();
+                if (inv.contains(Material.SNOWBALL)){
+                    Bukkit.broadcastMessage("Contains snow");
+                    return;
+                }
+                plugin.gameManager.gameFunctions.addSnowballs(player);
+            }
+        }.runTaskLater(plugin, 1);
+
     }
 
     @EventHandler
@@ -44,12 +52,25 @@ public class ReloadSnowballs implements Listener {
         if (!plugin.gameManager.isInGame || !plugin.gameManager.players.keySet().contains(player.getUniqueId())){
             return;
         }
-        if(!event.getAction().equals(Action.RIGHT_CLICK_AIR) || !event.getAction().equals(Action.RIGHT_CLICK_BLOCK)){
+        if (event.getItem().getType() != Material.SNOWBALL){
             return;
         }
-        if (!event.getMaterial().equals(Material.SNOWBALL)){
+        if(event.getAction() == Action.RIGHT_CLICK_AIR|| event.getAction() == Action.RIGHT_CLICK_BLOCK){
+            plugin.gameManager.players.get(player.getUniqueId()).setHasThrownSnowball(true);
             return;
         }
+        if (plugin.gameManager.players.get(player.getUniqueId()).getHasThrownSnowball()){
+            plugin.gameManager.players.get(player.getUniqueId()).setHasThrownSnowball(false);
+            return;
+        }
+
+        Bukkit.broadcastMessage("reloading");
         plugin.gameManager.gameFunctions.addSnowballs(player);
+
+
+
+
+
+
     }
 }

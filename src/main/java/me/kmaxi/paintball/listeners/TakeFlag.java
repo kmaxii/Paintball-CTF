@@ -40,10 +40,19 @@ public class TakeFlag implements Listener {
     public void returnFlag(Player player){
         Flag flag = plugin.gameManager.flags.get(plugin.gameManager.players.get(player.getUniqueId()).getTeam());
         flag.getLocation().getWorld().getBlockAt(flag.getLocation()).setType(Material.AIR);
-        Bukkit.broadcastMessage("Set to air");
         flag.setTaken(false);
         flag.setDropped(false);
         plugin.gameManager.gameFunctions.placeFlags();
+        flag.resetLocation();
+
+        plugin.gameManager.players.values().forEach(playerManager1 -> {
+            if (playerManager1.getTeam().equals(plugin.gameManager.players.get(player.getUniqueId()).getTeam())){
+                playerManager1.getPlayer().playSound(playerManager1.getPlayer().getLocation(), Sound.ENTITY_GUARDIAN_DEATH_LAND, 1, 1);
+            }
+            else {
+                playerManager1.getPlayer().playSound(playerManager1.getPlayer().getLocation(), Sound.ENTITY_ELDER_GUARDIAN_CURSE, 1, 1);
+            }
+        });
 
     }
 
@@ -76,6 +85,9 @@ public class TakeFlag implements Listener {
                 if (playerManager1.getTeam().equals(teamName)){
                     playerManager1.getPlayer().playSound(playerManager1.getPlayer().getLocation(), Sound.ENTITY_GHAST_WARN, 1, 1);
                 }
+                else {
+                    playerManager1.getPlayer().playSound(playerManager1.getPlayer().getLocation(), Sound.ENTITY_WOLF_WHINE, 1, 1);
+                }
             });
         }
     }
@@ -97,6 +109,9 @@ public class TakeFlag implements Listener {
         plugin.gameManager.players.values().forEach(playerManager1 -> {
             if (playerManager1.getTeam().equals(finalCapturedFlagTeam1)){
                 playerManager1.getPlayer().playSound(playerManager1.getPlayer().getLocation(), Sound.ENTITY_GHAST_SCREAM, 1, 1);
+            }
+            else {
+                playerManager1.getPlayer().playSound(playerManager1.getPlayer().getLocation(), Sound.ENTITY_WOLF_HOWL, 1, 1);
             }
         });
         if (plugin.gameManager.flags.get(capturedFlagTeam).getCaptures() == 3){

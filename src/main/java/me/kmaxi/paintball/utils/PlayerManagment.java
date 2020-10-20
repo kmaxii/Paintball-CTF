@@ -1,6 +1,7 @@
 package me.kmaxi.paintball.utils;
 
 import me.kmaxi.paintball.PaintballMain;
+import me.kmaxi.paintball.gamehandler.Flag;
 import me.kmaxi.paintball.gamehandler.PlayerManager;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
@@ -92,20 +93,50 @@ public class PlayerManagment {
         Player player = playerManager.getPlayer();
         Location location = player.getLocation();
         String playerTeam = playerManager.getTeam();
+        String flagTeam = null;
         if (playerTeam.equals("red")){
-            location.getWorld().getBlockAt(location).setType(Material.BLUE_BANNER);
-            plugin.gameManager.flags.get("blue").setTakenLocation(location);
-            Bukkit.broadcastMessage(player.getName() + " has dropped the " + ChatColor.BLUE + "blue flag");
-            plugin.gameManager.flags.get("blue").setTaken(false);
-            plugin.gameManager.flags.get("blue").setDropped(true);
+            flagTeam = "blue";
         }
         if (playerTeam.equals("blue")){
-            location.getWorld().getBlockAt(location).setType(Material.RED_BANNER);
-            plugin.gameManager.flags.get("red").setTakenLocation(location);
-            Bukkit.broadcastMessage(player.getName() + " has dropped the " + ChatColor.RED + "red flag");
-            plugin.gameManager.flags.get("red").setTaken(false);
-            plugin.gameManager.flags.get("red").setDropped(true);
+            flagTeam = "red";
         }
+        location.getWorld().getBlockAt(location).setType(Material.RED_BANNER);
+        plugin.gameManager.flags.get(flagTeam).setTakenLocation(location);
+        Bukkit.broadcastMessage(player.getName() + " has dropped the " + flagTeam + "flag");
+        plugin.gameManager.flags.get(flagTeam).setTaken(false);
+        plugin.gameManager.flags.get(flagTeam).setDropped(true);
+        String finalFlagTeam = flagTeam;
+        new BukkitRunnable(){
+            int timeCheck = 300;
+
+            @Override
+            public void run() {
+                timeCheck--;
+                if(!plugin.gameManager.flags.get(finalFlagTeam).getDropped()){
+                    cancel();
+                }
+                if (timeCheck == 0){
+                    Flag flag = plugin.gameManager.flags.get(finalFlagTeam);
+                    flag.getLocation().getWorld().getBlockAt(flag.getLocation()).setType(Material.AIR);
+                    flag.setLocation(flag.getBaseLocation());
+                    flag.setTaken(false);
+                    flag.setDropped(false);
+                    plugin.gameManager.gameFunctions.placeFlags();
+                    Bukkit.broadcastMessage(ChatColor.WHITE + finalFlagTeam + " flag was returned because no one has picked it up");
+
+                    plugin.gameManager.players.values().forEach(playerManager1 -> {
+                        if (playerManager1.getTeam().equals(plugin.gameManager.players.get(player.getUniqueId()).getTeam())){
+                            playerManager1.getPlayer().playSound(playerManager1.getPlayer().getLocation(), Sound.ENTITY_GUARDIAN_DEATH_LAND, 1, 1);
+                        }
+                        else {
+                            playerManager1.getPlayer().playSound(playerManager1.getPlayer().getLocation(), Sound.ENTITY_ELDER_GUARDIAN_CURSE, 1, 1);
+                        }
+                    });
+                }
+
+
+            }
+        }.runTaskTimer(plugin, 0, 2);
 
     }
 

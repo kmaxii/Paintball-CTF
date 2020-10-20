@@ -36,16 +36,13 @@ public class GameFunctions {
         }
     }
     public void placeFlags(){
-        Bukkit.broadcastMessage("Setting flags");
         if (!(plugin.gameManager.flags.get("red").isTaken()) && !(plugin.gameManager.flags.get("red").getDropped())){
-            Bukkit.broadcastMessage("Set red flag");
             Location redFlagLocation = plugin.gameManager.flags.get("red").getBaseLocation();
             redFlagLocation.getWorld().getBlockAt(redFlagLocation).setType(Material.RED_BANNER);
         }
         if (!plugin.gameManager.flags.get("blue").isTaken() && !plugin.gameManager.flags.get("blue").getDropped()){
             Location blueFlagLocation = plugin.gameManager.flags.get("blue").getBaseLocation();
             blueFlagLocation.getWorld().getBlockAt(blueFlagLocation).setType(Material.BLUE_BANNER);
-            Bukkit.broadcastMessage("Set blue flag");
         }
     }
 

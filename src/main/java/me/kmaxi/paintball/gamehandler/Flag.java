@@ -81,4 +81,8 @@ public class Flag {
     public Boolean getDropped() {
         return isDropped;
     }
+
+    public void resetLocation(){
+        this.setLocation(this.baselocation);
+    }
 }

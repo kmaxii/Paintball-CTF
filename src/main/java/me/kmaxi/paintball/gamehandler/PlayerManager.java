@@ -107,5 +107,9 @@ public class PlayerManager {
     public Boolean getHasThrownSnowball() {
         return hasThrownSnowball;
     }
+
+    public int getKills() {
+        return kills;
+    }
 }
 

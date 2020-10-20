@@ -5,11 +5,13 @@ import me.kmaxi.paintball.utils.InventoryManagment;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class GameManager {
     private final PaintballMain plugin;
@@ -88,6 +90,20 @@ public class GameManager {
     }
 
     public void endGame(){
+        isInGame = false;
+
+        ArrayList<String> winning = winningTeam();
+        if (winning.size() == 1){
+            if (winning.get(0) == null){
+                announceDraw();
+                resetPlayers();
+                return;
+            }
+            annouceWinnerByCaptures(winning.get(0));
+            return;
+        }
+        announceWinnerByKills(winning.get(0), winning.get(1), winning.get(2));
+
 
     }
 
@@ -117,6 +133,77 @@ public class GameManager {
         for (int i = 1; i <= spawnPointAmount; i++){
             blueSpawnPoints.add((Location) plugin.getConfig().get("paintball.blue.spawnPoints." + i));
         }
+    }
+
+    private ArrayList<String> winningTeam(){
+        ArrayList<String> winningTeam= new ArrayList<>();
+        if (plugin.gameManager.flags.get("red").getCaptures() > plugin.gameManager.flags.get("blue").getCaptures()){
+            winningTeam.add("blue");
+            return winningTeam;
+        }
+        if (plugin.gameManager.flags.get("red").getCaptures() < plugin.gameManager.flags.get("blue").getCaptures()){
+            winningTeam.add("red");
+            return winningTeam;
+        }
+        AtomicInteger redKills = new AtomicInteger();
+        AtomicInteger blueKills = new AtomicInteger();
+        plugin.gameManager.players.values().forEach(playerManager -> {
+            if (playerManager.getTeam().equals("red")){
+                redKills.addAndGet(playerManager.getKills());
+            }
+            if (playerManager.getTeam().equals("blue")){
+                blueKills.addAndGet(playerManager.getKills());
+            }
+        });
+        int redKillsFinal = redKills.intValue();
+        int blueKillsFinal = blueKills.intValue();
+        if (redKillsFinal > blueKillsFinal){
+            winningTeam.add("red");
+            winningTeam.add(redKillsFinal + "");
+            winningTeam.add(blueKillsFinal + "");
+        }
+        if (blueKillsFinal > redKillsFinal){
+            winningTeam.add("blue");
+            winningTeam.add(blueKillsFinal + "");
+            winningTeam.add(redKillsFinal + "");
+        }
+        if(blueKillsFinal == redKillsFinal){
+            winningTeam.add(null);
+        }
+        return winningTeam;
+    }
+
+
+
+    private void resetPlayers(){
+        players.values().forEach(playerManager -> {
+            PlayerInventory inv = playerManager.getPlayer().getInventory();
+            inv.setHelmet(null);
+            inv.setHelmet(null);
+            inv.setLeggings(null);
+            inv.setBoots(null);
+            inv.clear();
+            playerManager.getPlayer().teleport(jail);
+        });
+    }
+
+    private void announceDraw(){
+        Bukkit.getOnlinePlayers().forEach(player -> {
+            player.playSound(player.getLocation(), Sound.BLOCK_ANCIENT_DEBRIS_BREAK, 1, 1);
+            player.sendTitle("It's a draw", "");
+        });
+    }
+    private void annouceWinnerByCaptures(String winner){
+        Bukkit.getOnlinePlayers().forEach(player -> {
+            player.playSound(player.getLocation(), Sound.BLOCK_BLASTFURNACE_FIRE_CRACKLE, 1, 1);
+            player.sendTitle(winner + " has won the game", "by capturing the flag");
+        });
+    }
+    private void announceWinnerByKills(String winner, String winningTeamKills, String losingTeamKills){
+        Bukkit.getOnlinePlayers().forEach(player -> {
+            player.playSound(player.getLocation(), Sound.ENTITY_ENDER_DRAGON_DEATH, 1, 1);
+            player.sendTitle(winner + " has won the game", "getting the most kills");
+        });
     }
 
 

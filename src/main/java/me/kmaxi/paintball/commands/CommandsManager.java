@@ -88,6 +88,7 @@ public class CommandsManager implements CommandExecutor {
         sender.sendMessage(ChatColor.GOLD + "/paintball " + plugin.commands.cmd4 + ChatColor.WHITE + " sets the location of the jail");
         sender.sendMessage(ChatColor.GOLD + "/paintball " + plugin.commands.cmd3 + ChatColor.RED + " red" + ChatColor.BLUE + " blue" + ChatColor.WHITE + " adds a spawn point for the chosen team");
         sender.sendMessage(ChatColor.GOLD + "/paintball " + plugin.commands.cmd2 + ChatColor.RED + " red" + ChatColor.BLUE + " blue" + ChatColor.WHITE + ChatColor.WHITE + " sets the flags location");
+        sender.sendMessage(ChatColor.GOLD + "/paintball " + plugin.commands.cmd6 + ChatColor.WHITE + " resets all data");
     }
 
     private void missingArgument(CommandSender sender){

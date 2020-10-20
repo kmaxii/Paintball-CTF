@@ -37,7 +37,6 @@ public class ReloadSnowballs implements Listener {
             public void run() {
                 PlayerInventory inv = player.getInventory();
                 if (inv.contains(Material.SNOWBALL)){
-                    Bukkit.broadcastMessage("Contains snow");
                     return;
                 }
                 plugin.gameManager.gameFunctions.addSnowballs(player);
@@ -50,6 +49,9 @@ public class ReloadSnowballs implements Listener {
     public void reload(PlayerInteractEvent event){
         Player player = event.getPlayer();
         if (!plugin.gameManager.isInGame || !plugin.gameManager.players.keySet().contains(player.getUniqueId())){
+            return;
+        }
+        if (!event.hasItem()){
             return;
         }
         if (event.getItem().getType() != Material.SNOWBALL){

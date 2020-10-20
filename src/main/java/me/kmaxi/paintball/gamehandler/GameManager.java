@@ -104,8 +104,8 @@ public class GameManager {
 
     private void initializeLocations(){ //Initializes all locations in this class to the ones that stand in the config
         this.jail = (Location) plugin.getConfig().get("paintball.jail");
-        this.flags.put("red", new Flag(plugin, (Location) plugin.getConfig().get("paintball.red.flagposition")));
-        this.flags.put("blue", new Flag(plugin, (Location) plugin.getConfig().get("paintball.blue.flagposition")));
+        this.flags.put("red", new Flag(plugin, (Location) plugin.getConfig().get("paintball.red.flagposition"), Color.RED));
+        this.flags.put("blue", new Flag(plugin, (Location) plugin.getConfig().get("paintball.blue.flagposition"), Color.BLUE));
         this.redSpawnPoints.clear();
         this.blueSpawnPoints.clear();
 

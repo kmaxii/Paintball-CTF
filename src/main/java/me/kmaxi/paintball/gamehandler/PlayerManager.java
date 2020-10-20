@@ -35,6 +35,7 @@ public class PlayerManager {
         this.team = " ";
         this.isAlive = false;
         this.setHasThrownSnowball(false);
+        this.hasFlag = false;
 
     }
 

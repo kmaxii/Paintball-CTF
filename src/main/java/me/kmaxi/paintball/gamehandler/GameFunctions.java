@@ -1,10 +1,7 @@
 package me.kmaxi.paintball.gamehandler;
 
 import me.kmaxi.paintball.PaintballMain;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -39,13 +36,16 @@ public class GameFunctions {
         }
     }
     public void placeFlags(){
-        if (!plugin.gameManager.flags.get("red").isTaken()){
-            Location redFlagLocation = plugin.gameManager.flags.get("red").getLocation();
+        Bukkit.broadcastMessage("Setting flags");
+        if (!(plugin.gameManager.flags.get("red").isTaken()) && !(plugin.gameManager.flags.get("red").getDropped())){
+            Bukkit.broadcastMessage("Set red flag");
+            Location redFlagLocation = plugin.gameManager.flags.get("red").getBaseLocation();
             redFlagLocation.getWorld().getBlockAt(redFlagLocation).setType(Material.RED_BANNER);
         }
-        if (!plugin.gameManager.flags.get("blue").isTaken()){
-            Location blueFlagLocation = plugin.gameManager.flags.get("blue").getLocation();
+        if (!plugin.gameManager.flags.get("blue").isTaken() && !plugin.gameManager.flags.get("blue").getDropped()){
+            Location blueFlagLocation = plugin.gameManager.flags.get("blue").getBaseLocation();
             blueFlagLocation.getWorld().getBlockAt(blueFlagLocation).setType(Material.BLUE_BANNER);
+            Bukkit.broadcastMessage("Set blue flag");
         }
     }
 

@@ -3,7 +3,6 @@ package me.kmaxi.paintball.utils;
 import me.kmaxi.paintball.PaintballMain;
 import me.kmaxi.paintball.gamehandler.PlayerManager;
 import org.bukkit.*;
-import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -41,6 +40,10 @@ public class PlayerManagment {
     public void die(Player player){
         Location deathLocation = player.getLocation();
         PlayerManager playerManager = plugin.gameManager.players.get(player.getUniqueId());
+        if (playerManager.getHasFlag()){
+            dropFlag(playerManager);
+            player.getInventory().setHelmet(null);
+        }
         playerManager.die();
         FireworkEffect fireworkEffect;
         if (playerManager.getTeam().equals("red")){
@@ -82,33 +85,27 @@ public class PlayerManagment {
         if (playerManager.getTeam().equals("blue")){
             inv.setHelmet(new ItemStack(Material.RED_BANNER));
         }
-        new BukkitRunnable(){
 
-            @Override
-            public void run() {
-                if (!playerManager.getHasFlag() || !plugin.gameManager.isInGame){
-                    inv.setHelmet(null);
-                    playerManager.setHasFlag(false);
-                    plugin.gameManager.flags.get(playerManager.getTeam()).capture();
-                    if(plugin.gameManager.flags.get(playerManager.getTeam()).getCaptures() == 3){
-                        plugin.gameManager.endGame();
-                    }
-                    cancel();
-                }
-                Location check = player.getLocation();
-                check.setY(check.getY() - 1);
-                if (check.getBlock().getType().equals(Material.LAPIS_BLOCK)){
-                    if (playerManager.getTeam().equals("blue") && !plugin.gameManager.flags.get("red").isTaken()){
-                        playerManager.flagCapture();
-                    }
-                }
-                if (check.getBlock().getType().equals(Material.REDSTONE_BLOCK)){
-                    if (playerManager.getTeam().equals("red") && !plugin.gameManager.flags.get("red").isTaken()){
-                        playerManager.flagCapture();
-                    }
-                }
-            }
-        }.runTaskTimer(plugin, 0, 2);
+    }
+
+    public void dropFlag(PlayerManager playerManager){
+        Player player = playerManager.getPlayer();
+        Location location = player.getLocation();
+        String playerTeam = playerManager.getTeam();
+        if (playerTeam.equals("red")){
+            location.getWorld().getBlockAt(location).setType(Material.BLUE_BANNER);
+            plugin.gameManager.flags.get("blue").setTakenLocation(location);
+            Bukkit.broadcastMessage(player.getName() + " has dropped the " + ChatColor.BLUE + "blue flag");
+            plugin.gameManager.flags.get("blue").setTaken(false);
+            plugin.gameManager.flags.get("blue").setDropped(true);
+        }
+        if (playerTeam.equals("blue")){
+            location.getWorld().getBlockAt(location).setType(Material.RED_BANNER);
+            plugin.gameManager.flags.get("red").setTakenLocation(location);
+            Bukkit.broadcastMessage(player.getName() + " has dropped the " + ChatColor.RED + "red flag");
+            plugin.gameManager.flags.get("red").setTaken(false);
+            plugin.gameManager.flags.get("red").setDropped(true);
+        }
 
     }
 

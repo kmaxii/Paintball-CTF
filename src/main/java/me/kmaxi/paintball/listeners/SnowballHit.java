@@ -3,10 +3,14 @@ package me.kmaxi.paintball.listeners;
 import me.kmaxi.paintball.PaintballMain;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Snowball;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 
 public class SnowballHit implements Listener {
@@ -19,21 +23,27 @@ public class SnowballHit implements Listener {
 
 
     @EventHandler
-    public void onHit(ProjectileHitEvent event){
-        if (!plugin.gameManager.isInGame
-                || !event.getEntity().getType().equals(EntityType.SNOWBALL)
-                || !(event.getEntity().getShooter() instanceof Player)
-                || !(event.getHitEntity() instanceof Player)){
+    public void onHit(EntityDamageByEntityEvent event){
+        if (!plugin.gameManager.isInGame){
             return;
         }
-        Player player = (Player) event.getEntity().getShooter();
+        Entity thrownEntity = event.getDamager();
+        if (!(thrownEntity.getType().equals(Material.SNOW_BALL) || !(event.getDamager() instanceof Player))){
+            return;
+        }
+        Snowball snowball = (Snowball) thrownEntity;
+        if(!(snowball.getShooter() instanceof Player) || !(event.getEntity() instanceof Player)){
+            return;
+        }
+
+        Player player = (Player) snowball.getShooter();
         if (!plugin.gameManager.players.containsKey(player.getUniqueId())){
             return;
         }
         if (!plugin.gameManager.players.get(player.getUniqueId()).isAlive()){
             return;
         }
-        Player hit = (Player) event.getHitEntity();
+        Player hit = (Player) event.getEntity();
         String throwerTeam = plugin.gameManager.players.get(player.getUniqueId()).getTeam();
         String hitTeam = plugin.gameManager.players.get(hit.getUniqueId()).getTeam();
         if (throwerTeam.equals(hitTeam)){

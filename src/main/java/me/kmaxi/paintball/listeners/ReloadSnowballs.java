@@ -2,6 +2,7 @@ package me.kmaxi.paintball.listeners;
 
 import me.kmaxi.paintball.PaintballMain;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -36,7 +37,7 @@ public class ReloadSnowballs implements Listener {
             @Override
             public void run() {
                 PlayerInventory inv = player.getInventory();
-                if (inv.contains(Material.SNOWBALL)){
+                if (inv.contains(Material.SNOW_BALL)){
                     return;
                 }
                 plugin.gameManager.gameFunctions.addSnowballs(player);
@@ -54,19 +55,15 @@ public class ReloadSnowballs implements Listener {
         if (!event.hasItem()){
             return;
         }
-        if (event.getItem().getType() != Material.SNOWBALL){
+        if (event.getItem().getType() != Material.SNOW_BALL){
             return;
         }
-        if(event.getAction() == Action.RIGHT_CLICK_AIR|| event.getAction() == Action.RIGHT_CLICK_BLOCK){
-            plugin.gameManager.players.get(player.getUniqueId()).setHasThrownSnowball(true);
-            return;
-        }
-        if (plugin.gameManager.players.get(player.getUniqueId()).getHasThrownSnowball()){
-            plugin.gameManager.players.get(player.getUniqueId()).setHasThrownSnowball(false);
+        if(event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK){
             return;
         }
 
-        Bukkit.broadcastMessage("reloading");
+
+        player.sendMessage(ChatColor.GRAY + "reloading");
         plugin.gameManager.gameFunctions.addSnowballs(player);
 
 

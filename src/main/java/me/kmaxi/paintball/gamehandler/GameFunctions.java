@@ -1,6 +1,7 @@
 package me.kmaxi.paintball.gamehandler;
 
 import me.kmaxi.paintball.PaintballMain;
+import me.kmaxi.paintball.utils.Utils;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -38,17 +39,17 @@ public class GameFunctions {
     public void placeFlags(){
         if (!(plugin.gameManager.flags.get("red").isTaken()) && !(plugin.gameManager.flags.get("red").getDropped())){
             Location redFlagLocation = plugin.gameManager.flags.get("red").getBaseLocation();
-            redFlagLocation.getWorld().getBlockAt(redFlagLocation).setType(Material.RED_BANNER);
+            Utils.setBanner(DyeColor.RED, redFlagLocation);
         }
         if (!plugin.gameManager.flags.get("blue").isTaken() && !plugin.gameManager.flags.get("blue").getDropped()){
             Location blueFlagLocation = plugin.gameManager.flags.get("blue").getBaseLocation();
-            blueFlagLocation.getWorld().getBlockAt(blueFlagLocation).setType(Material.BLUE_BANNER);
+            Utils.setBanner(DyeColor.BLUE, blueFlagLocation);
         }
     }
 
     public void addSnowballs(Player player){
         PlayerInventory inv = player.getInventory();
-        inv.remove(Material.SNOWBALL);
+        inv.remove(Material.SNOW_BALL);
         new BukkitRunnable(){
             int time = 5;
             @Override
@@ -57,8 +58,8 @@ public class GameFunctions {
                     player.sendMessage(ChatColor.WHITE + "" + time + " seconds remaining");
                     time--;
                 } else {
-                    player.playSound(player.getLocation(), Sound.BLOCK_SNOW_PLACE, 2, 2);
-                    inv.setItem(0, new ItemStack(Material.SNOWBALL, 64));
+                    player.playSound(player.getLocation(), Sound.DIG_SNOW, 2, 2);
+                    inv.setItem(0, new ItemStack(Material.SNOW_BALL, 64));
                     cancel();
                 }
 

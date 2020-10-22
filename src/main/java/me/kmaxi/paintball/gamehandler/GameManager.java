@@ -64,7 +64,7 @@ public class GameManager {
                 if (time > 0){
                     Bukkit.broadcastMessage(ChatColor.YELLOW + "The game starts in " + time + " seconds");
                     Bukkit.getServer().getOnlinePlayers().forEach(player -> {
-                        player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 2, 2);
+                        player.playSound(player.getLocation(), Sound.NOTE_PLING, 2, 2);
                     });
                     time--;
                 } else {
@@ -80,7 +80,7 @@ public class GameManager {
         gameFunctions.placeFlags();
         players.keySet().forEach(uuid -> {
             Player player = Bukkit.getPlayer(uuid);
-            player.getInventory().setItem(0, new ItemStack(Material.SNOWBALL, 64));
+            player.getInventory().setItem(0, new ItemStack(Material.SNOW_BALL, 64));
         });
         this.isStarting = false;
         this.isInGame = true;
@@ -189,19 +189,19 @@ public class GameManager {
 
     private void announceDraw(){
         Bukkit.getOnlinePlayers().forEach(player -> {
-            player.playSound(player.getLocation(), Sound.BLOCK_ANCIENT_DEBRIS_BREAK, 1, 1);
+            player.playSound(player.getLocation(), Sound.CREEPER_DEATH, 1, 1);
             player.sendTitle("It's a draw", "");
         });
     }
     private void annouceWinnerByCaptures(String winner){
         Bukkit.getOnlinePlayers().forEach(player -> {
-            player.playSound(player.getLocation(), Sound.BLOCK_BLASTFURNACE_FIRE_CRACKLE, 1, 1);
+            player.playSound(player.getLocation(), Sound.ENDERDRAGON_DEATH, 1, 1);
             player.sendTitle(winner + " has won the game", "by capturing the flag");
         });
     }
     private void announceWinnerByKills(String winner, String winningTeamKills, String losingTeamKills){
         Bukkit.getOnlinePlayers().forEach(player -> {
-            player.playSound(player.getLocation(), Sound.ENTITY_ENDER_DRAGON_DEATH, 1, 1);
+            player.playSound(player.getLocation(), Sound.ENDERDRAGON_DEATH, 1, 1);
             player.sendTitle(winner + " has won the game", "getting the most kills");
         });
     }

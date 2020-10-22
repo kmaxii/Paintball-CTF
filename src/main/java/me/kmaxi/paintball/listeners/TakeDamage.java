@@ -18,7 +18,7 @@ public class TakeDamage implements Listener {
         if (!plugin.gameManager.isInGame){
             return;
         }
-        if (event.getEntity() instanceof Player){
+        if (!(event.getEntity() instanceof Player)){
             return;
         }
         Player player = (Player) event.getEntity();

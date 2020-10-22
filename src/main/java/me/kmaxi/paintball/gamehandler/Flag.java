@@ -36,7 +36,7 @@ public class Flag {
     public void setTaken(Boolean taken) {
         if (taken){
             Block block = baselocation.getWorld().getBlockAt(baselocation);
-            if (!(block.getType() == Material.RED_BANNER) || !(block.getType() == Material.BLUE_BANNER)){
+            if (!(block.getType() == Material.STANDING_BANNER)){
                 block.setType(Material.AIR);
             }
         }

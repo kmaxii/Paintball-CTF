@@ -47,10 +47,10 @@ public class TakeFlag implements Listener {
 
         plugin.gameManager.players.values().forEach(playerManager1 -> {
             if (playerManager1.getTeam().equals(plugin.gameManager.players.get(player.getUniqueId()).getTeam())){
-                playerManager1.getPlayer().playSound(playerManager1.getPlayer().getLocation(), Sound.ENTITY_GUARDIAN_DEATH_LAND, 1, 1);
+                playerManager1.getPlayer().playSound(playerManager1.getPlayer().getLocation(), Sound.ENDERMAN_TELEPORT, 1, 1);
             }
             else {
-                playerManager1.getPlayer().playSound(playerManager1.getPlayer().getLocation(), Sound.ENTITY_ELDER_GUARDIAN_CURSE, 1, 1);
+                playerManager1.getPlayer().playSound(playerManager1.getPlayer().getLocation(), Sound.ANVIL_BREAK, 1, 1);
             }
         });
 
@@ -81,12 +81,13 @@ public class TakeFlag implements Listener {
             plugin.gameManager.flags.get(teamName).setTaken(true);
             plugin.playerManagment.gotFlag(player);
             Bukkit.broadcastMessage(ChatColor.GOLD + player.getName() + ChatColor.YELLOW + " has picked up the " + teamName + ChatColor.YELLOW + " flag");
+            plugin.gameManager.flags.get(teamName).getLocation().getBlock().setType(Material.AIR);
             plugin.gameManager.players.values().forEach(playerManager1 -> {
                 if (playerManager1.getTeam().equals(teamName)){
-                    playerManager1.getPlayer().playSound(playerManager1.getPlayer().getLocation(), Sound.ENTITY_GHAST_WARN, 1, 1);
+                    playerManager1.getPlayer().playSound(playerManager1.getPlayer().getLocation(), Sound.GHAST_CHARGE, 1, 1);
                 }
                 else {
-                    playerManager1.getPlayer().playSound(playerManager1.getPlayer().getLocation(), Sound.ENTITY_WOLF_WHINE, 1, 1);
+                    playerManager1.getPlayer().playSound(playerManager1.getPlayer().getLocation(), Sound.WOLF_WHINE, 1, 1);
                 }
             });
         }
@@ -108,10 +109,10 @@ public class TakeFlag implements Listener {
         String finalCapturedFlagTeam1 = capturedFlagTeam;
         plugin.gameManager.players.values().forEach(playerManager1 -> {
             if (playerManager1.getTeam().equals(finalCapturedFlagTeam1)){
-                playerManager1.getPlayer().playSound(playerManager1.getPlayer().getLocation(), Sound.ENTITY_GHAST_SCREAM, 1, 1);
+                playerManager1.getPlayer().playSound(playerManager1.getPlayer().getLocation(), Sound.GHAST_SCREAM, 1, 1);
             }
             else {
-                playerManager1.getPlayer().playSound(playerManager1.getPlayer().getLocation(), Sound.ENTITY_WOLF_HOWL, 1, 1);
+                playerManager1.getPlayer().playSound(playerManager1.getPlayer().getLocation(), Sound.WOLF_HOWL, 1, 1);
             }
         });
         if (plugin.gameManager.flags.get(capturedFlagTeam).getCaptures() == 3){

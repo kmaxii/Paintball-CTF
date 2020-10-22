@@ -54,8 +54,9 @@ public class PlayerManagment {
             fireworkEffect = FireworkEffect.builder().flicker(false).trail(true).with(FireworkEffect.Type.BALL).withColor(Color.BLUE).withFade(Color.BLUE).build();
         }
         new InstantFirework(fireworkEffect, deathLocation);
-        deathLocation.getWorld().playSound(deathLocation, Sound.ENTITY_FIREWORK_ROCKET_BLAST, 10, 2);
+        deathLocation.getWorld().playSound(deathLocation, Sound.FIREWORK_BLAST, 10, 2);
         player.teleport(plugin.gameManager.jail);
+        plugin.gameManager.gameFunctions.addSnowballs(player);
         new BukkitRunnable(){
             int time = 10;
             @Override
@@ -66,7 +67,7 @@ public class PlayerManagment {
                     cancel();
                 }
                 player.sendMessage(ChatColor.GOLD + "" + time + " seconds to respawn");
-                player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_HAT, 1, 1);
+                player.playSound(player.getLocation(), Sound.NOTE_BASS_GUITAR, 1, 1);
                 time--;
             }
         }.runTaskTimer(plugin, 0, 20);
@@ -81,10 +82,10 @@ public class PlayerManagment {
         playerManager.setHasFlag(true);
         PlayerInventory inv = player.getInventory();
         if (playerManager.getTeam().equals("red")){
-            inv.setHelmet(new ItemStack(Material.BLUE_BANNER));
+            inv.setHelmet(Utils.getBanner(DyeColor.BLUE));
         }
         if (playerManager.getTeam().equals("blue")){
-            inv.setHelmet(new ItemStack(Material.RED_BANNER));
+            inv.setHelmet(Utils.getBanner(DyeColor.RED));
         }
 
     }
@@ -96,11 +97,12 @@ public class PlayerManagment {
         String flagTeam = null;
         if (playerTeam.equals("red")){
             flagTeam = "blue";
+            Utils.setBanner(DyeColor.BLUE, location);
         }
         if (playerTeam.equals("blue")){
             flagTeam = "red";
+            Utils.setBanner(DyeColor.RED, location);
         }
-        location.getWorld().getBlockAt(location).setType(Material.RED_BANNER);
         plugin.gameManager.flags.get(flagTeam).setTakenLocation(location);
         Bukkit.broadcastMessage(player.getName() + " has dropped the " + flagTeam + "flag");
         plugin.gameManager.flags.get(flagTeam).setTaken(false);
@@ -126,10 +128,10 @@ public class PlayerManagment {
 
                     plugin.gameManager.players.values().forEach(playerManager1 -> {
                         if (playerManager1.getTeam().equals(plugin.gameManager.players.get(player.getUniqueId()).getTeam())){
-                            playerManager1.getPlayer().playSound(playerManager1.getPlayer().getLocation(), Sound.ENTITY_GUARDIAN_DEATH_LAND, 1, 1);
+                            playerManager1.getPlayer().playSound(playerManager1.getPlayer().getLocation(), Sound.ENDERMAN_TELEPORT, 1, 1);
                         }
                         else {
-                            playerManager1.getPlayer().playSound(playerManager1.getPlayer().getLocation(), Sound.ENTITY_ELDER_GUARDIAN_CURSE, 1, 1);
+                            playerManager1.getPlayer().playSound(playerManager1.getPlayer().getLocation(), Sound.ANVIL_BREAK, 1, 1);
                         }
                     });
                 }
